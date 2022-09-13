@@ -19,7 +19,7 @@ export const THEME = {
     OVERLAY: 'rgba(0,0,0,0.6)',
   },
 
-  FONT_FAMILY: {
+  FONT_WEIGHT: {
     REGULAR: 'Inter_400Regular',
     SEMI_BOLD: 'Inter_600SemiBold',
     BOLD: 'Inter_700Bold',
