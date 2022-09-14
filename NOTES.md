@@ -2,8 +2,13 @@
 
 ## Tecnologias utilizadas
 
-- NPM
-- Express
+- Node
+  - Express
+  - Prisma
+  - Cors
 - React
+  - Phosphor Icons
 - React Native
+  - Linear Gradient
 - Postman
+- SQLite

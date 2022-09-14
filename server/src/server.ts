@@ -1,13 +1,115 @@
 import express from 'express'
+import cors from 'cors'
+import { PrismaClient } from '@prisma/client'
+
+import { convertHourStringToMinutes } from './utils/convert-hour-string-to-minutes'
+import { convertMinutesToHourString } from './utils/convert-minutes-to-hour-string'
 
 const app = express()
-app.get('/ads', (request, response) => {
-  return response.json([
-    { id: 1, name: 'Anúncio 1'},
-    { id: 2, name: 'Anúncio 2'},
-    { id: 3, name: 'Anúncio 3'},
-    { id: 4, name: 'Anúncio 4'},
-    { id: 5, name: 'Anúncio 5'}
-  ])
+app.use(express.json())
+app.use(cors()) /* Por enquanto, aberto a todos */
+/* TODO: Antes de subir para produção, especificar o domínio que poderá acessar esse backend */
+/* app.use(cors({
+  origin: 'dominio'
+})) */
+
+const prisma = new PrismaClient()
+
+/* Gets */
+/**
+ * Retorna todos os Games
+ */
+app.get('/games', async (_request, response) => {
+  const games = await prisma.game.findMany({
+    include: {
+      _count: {
+        select: {
+          ads: true
+        }
+      }
+    }
+  })
+  return response.json(games)
+}) 
+
+/**
+ * Retorna todos os Ads de um Game passado pelo id
+ */
+app.get('/games/:id/ads', async (request, response) => {
+  const gameId = request.params.id
+  
+  const ads = await prisma.ad.findMany({
+    select: {
+      id: true,
+      name: true,
+      yearsPlaying: true,
+      weekDays: true,
+      hoursStart: true,
+      hoursEnd: true,
+      useVoiceChannel: true
+    },
+    where: {
+      gameId
+    },
+    orderBy: {
+      createdAt: 'desc'
+    }
+  })
+  
+  return response.json(ads.map(ad => {
+    return {
+      ...ad,
+      weekDays: ad.weekDays.split(','),
+      hoursStart: convertMinutesToHourString(ad.hoursStart),
+      hoursEnd: convertMinutesToHourString(ad.hoursEnd)
+    }
+  }))
 })
+
+/**
+ * Retorna o campo Discord de um Ad passado pelo id
+ */
+app.get('/ads/:id/discord', async (request, response) => {
+  const adId = request.params.id
+
+  const ad = await prisma.ad.findUniqueOrThrow({
+    select: {
+      discord: true
+    },
+    where: {
+      id: adId
+    }
+  })
+  
+  return response.json({
+    discord: ad.discord
+  })
+})
+
+/* Posts */
+/**
+ * Cria um Ad em um Game passado pelo id
+ */
+app.post('/games/:id/ads', async (request, response) => {
+  const gameId = request.params.id
+  const body = request.body
+
+  /* TODO: Validação com a biblioteca Zod */
+
+  const ad = await prisma.ad.create({
+    data: {
+      gameId,
+      name: body.name,
+      yearsPlaying: body.yearsPlaying,
+      weekDays: body.weekDays.join(','),
+      hoursStart: convertHourStringToMinutes(body.hoursStart),
+      hoursEnd: convertHourStringToMinutes(body.hoursEnd),
+      discord: body.discord,
+      useVoiceChannel: body.useVoiceChannel,
+    }
+  })
+  
+  return response.status(201).json(ad)
+})
+
 app.listen(3000)
