@@ -1,4 +1,6 @@
 import { FormEvent, useState } from 'react';
+import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Checkbox from '@radix-ui/react-checkbox'
 import { Check, GameController } from "phosphor-react";
@@ -7,30 +9,107 @@ import { Input } from "./Input";
 import { SelectInput } from './SelectInput';
 import { WeekDaysInput } from './WeekDaysInput';
 
+interface IFormData { 
+  name?: any; 
+  yearsPlaying?: any; 
+  hoursStart?: any; 
+  hoursEnd?: any; 
+  discord?: any; 
+  [x: string]: FormDataEntryValue;
+}
+
 export function Form() {
+  const [selectedGameId, setSelectedGameId] = useState('')
   const [weekDays, setWeekDays] = useState<string[]>([])
   const [useVoiceChannel, setUseVoiceChannel] = useState(false)
   
-  function createAd(event: FormEvent) {
+  async function createAd(event: FormEvent) {
     event.preventDefault()
 
     const formData = new FormData(event.target as HTMLFormElement)
     const data = Object.fromEntries(formData)
 
-    console.log(data);
-    console.log(weekDays)
-    console.log(useVoiceChannel);
+    if (!selectedGameId) {
+      toast.error('Selecione um jogo', {
+        iconTheme: {
+          primary: '#e73f5d',
+          secondary: 'white',
+        },
+        style: {
+          fontFamily: 'Inter, sans-serif;',
+          fontWeight: '600',
+          color: 'white',
+          backgroundColor: '#2a2634'
+        }
+      })
+
+      return
+    }
+    
+    const discord = data.discord.toString()
+    const regex = /#[0-9]{4}$/
+    if (!regex.test(discord)){
+      toast.error('Discord inválido', {
+        iconTheme: {
+          primary: '#e73f5d',
+          secondary: 'white',
+        },
+        style: {
+          fontFamily: 'Inter, sans-serif;',
+          fontWeight: '600',
+          color: 'white',
+          backgroundColor: '#2a2634'
+        }
+      })
+
+      return
+    }
+
+    if (weekDays.length === 0) {
+      toast.error('Selecione no mínimo um dia da semana', {
+        iconTheme: {
+          primary: '#e73f5d',
+          secondary: 'white',
+        },
+        style: {
+          fontFamily: 'Inter, sans-serif;',
+          fontWeight: '600',
+          color: 'white',
+          backgroundColor: '#2a2634'
+        }
+      })
+
+      return
+    }
+
+    toast.promise(makeResquest(event, data), {
+      loading: 'Criando anúncio',
+      success: 'Anúncio criado com sucesso',
+      error: 'Erro ao criar um anúncio'
+    })
+  }
+
+  async function makeResquest(event: FormEvent, data: IFormData) {
+    await axios.post(`http://localhost:3000/games/${selectedGameId}/ads`, {
+      name: data.name,
+      yearsPlaying: Number(data.yearsPlaying),
+      weekDays: weekDays.map(Number),
+      hoursStart: data.hoursStart,
+      hoursEnd: data.hoursEnd,
+      discord: data.discord,
+      useVoiceChannel: useVoiceChannel
+    })
   }
   
   return (
-    <form className='flex flex-col gap-4 my-8' onSubmit={createAd}>
+    <form className='flex flex-col gap-4 my-8 font-semibold' onSubmit={createAd}>
       {/* game input */}
       <div className='flex flex-col gap-2'>
-        <label htmlFor='game' className='font-semibold'>
+        <label htmlFor='game'>
           Qual o game?
         </label>
 
-        <SelectInput />
+        <SelectInput selectedGame={setSelectedGameId} />
       </div>
 
       {/* nickname input */}
@@ -38,7 +117,7 @@ export function Form() {
         <label htmlFor='name'>
           Seu nome (ou nickname)
         </label>
-        <Input id='name' name='name' placeholder='Como te chamam dentro do game? Noob?' />
+        <Input id='name' name='name' placeholder='Como te chamam dentro do game? Noob?' required/>
       </div>
 
       {/* years playing + discord input */}
@@ -47,14 +126,14 @@ export function Form() {
           <label htmlFor='yearsPlaying'>
             Joga a quantos anos?
           </label>
-          <Input type='number' id='yearsPlaying' name='yearsPlaying' placeholder='Tudo bem se for ZERO'/>
+          <Input type='number' id='yearsPlaying' name='yearsPlaying' placeholder='Tudo bem se for ZERO' required/>
         </div>
 
         <div className='flex flex-col gap-2'>
           <label htmlFor='discord'>
             Qual seu Discord?
           </label>
-          <Input id='discord' name='discord' placeholder='Usuário#0000' />
+          <Input id='discord' name='discord' placeholder='Usuário#0000' required/>
         </div>
       </div>
 
@@ -74,8 +153,8 @@ export function Form() {
           </label>
 
           <div className='grid grid-cols-2 gap-2'>
-            <Input type='time' id='hoursStart' name='hoursStart' placeholder='De'/>
-            <Input type='time' id='hoursEnd' name='hoursEnd' placeholder='Até'/>
+            <Input type='time' id='hoursStart' name='hoursStart' placeholder='De' required/>
+            <Input type='time' id='hoursEnd' name='hoursEnd' placeholder='Até' required/>
           </div>
         </div>
       </div>
@@ -109,6 +188,33 @@ export function Form() {
           Encontrar duo
         </button>
       </footer>
+
+      <Toaster
+        containerStyle={{
+          top: -20,
+        }}
+        toastOptions={{
+          style: {
+            maxWidth: '1000px',
+            fontFamily: 'Inter, sans-serif;',
+            fontWeight: '600',
+            color: 'white',
+            backgroundColor: '#2a2634'
+          },
+          success: {
+            iconTheme: {
+              primary: 'green',
+              secondary: 'white',
+            },
+          },
+          error: {
+            iconTheme: {
+              primary: '#e73f5d',
+              secondary: 'white',
+            },
+          }
+        }}
+      />
     </form>
   )
 }

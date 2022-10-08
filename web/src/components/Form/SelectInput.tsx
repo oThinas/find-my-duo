@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react';
+import axios from 'axios';
 import { CaretDown, Check } from "phosphor-react";
 import * as Select from '@radix-ui/react-select';
 
 import { Game } from '../../interfaces/IGameProps';
 
-export function SelectInput() {
+interface SelectInputProps {
+  selectedGame: (gameId: string) => void
+}
+
+export function SelectInput(props: SelectInputProps) {
   const [games, setGames] = useState<Game[]>([])
   useEffect(() => {
-    fetch('http://localhost:3000/games')
-      .then(response => response.json())
-      .then(data => setGames(data))
+    axios('http://localhost:3000/games').then(response => {
+      setGames(response.data)
+    })
   }, [])
   
   return(
-    <Select.Root>
+    <Select.Root onValueChange={(gameId) => props.selectedGame(gameId)}>
       <Select.Trigger className='flex col-span-1 items-center justify-between px-4 py-3 rounded text-sm text-zinc-500 bg-zinc-900'>
         <Select.Value placeholder='Selectione o game que deseja jogar'/>
 
