@@ -7,6 +7,7 @@ import { Game } from '../../interfaces/IGameProps';
 
 interface SelectInputProps {
   selectedGame: (gameId: string) => void
+  error: boolean
 }
 
 export function SelectInput(props: SelectInputProps) {
@@ -19,7 +20,7 @@ export function SelectInput(props: SelectInputProps) {
   
   return(
     <Select.Root onValueChange={(gameId) => props.selectedGame(gameId)}>
-      <Select.Trigger className='flex col-span-1 items-center justify-between px-4 py-3 rounded text-sm text-zinc-500 bg-zinc-900'>
+      <Select.Trigger className={`flex col-span-1 items-center justify-between px-4 py-3 rounded text-sm text-zinc-500 bg-zinc-900 ${props.error ? 'ring-1 ring-error' : ''}`}>
         <Select.Value placeholder='Selectione o game que deseja jogar'/>
 
         <CaretDown size={24} className="color-zinc-300" />

@@ -22,6 +22,7 @@ export function Form() {
   const [selectedGameId, setSelectedGameId] = useState('')
   const [weekDays, setWeekDays] = useState<string[]>([])
   const [useVoiceChannel, setUseVoiceChannel] = useState(false)
+  const [isDiscordValid, setIsDiscordValid] = useState(true)
   
   async function createAd(event: FormEvent) {
     event.preventDefault()
@@ -29,6 +30,7 @@ export function Form() {
     const formData = new FormData(event.target as HTMLFormElement)
     const data = Object.fromEntries(formData)
 
+    console.log(selectedGameId)
     if (!selectedGameId) {
       toast.error('Selecione um jogo', {
         iconTheme: {
@@ -42,7 +44,7 @@ export function Form() {
           backgroundColor: '#2a2634'
         }
       })
-
+      setSelectedGameId('invalid')
       return
     }
     
@@ -61,7 +63,7 @@ export function Form() {
           backgroundColor: '#2a2634'
         }
       })
-
+      setIsDiscordValid(false)
       return
     }
 
@@ -82,14 +84,14 @@ export function Form() {
       return
     }
 
-    toast.promise(makeResquest(event, data), {
+    toast.promise(makeResquest(data), {
       loading: 'Criando anúncio',
       success: 'Anúncio criado com sucesso',
       error: 'Erro ao criar um anúncio'
     })
   }
 
-  async function makeResquest(event: FormEvent, data: IFormData) {
+  async function makeResquest(data: IFormData) {
     await axios.post(`http://localhost:3000/games/${selectedGameId}/ads`, {
       name: data.name,
       yearsPlaying: Number(data.yearsPlaying),
@@ -99,6 +101,8 @@ export function Form() {
       discord: data.discord,
       useVoiceChannel: useVoiceChannel
     })
+
+    location.reload()
   }
   
   return (
@@ -109,7 +113,7 @@ export function Form() {
           Qual o game?
         </label>
 
-        <SelectInput selectedGame={setSelectedGameId} />
+        <SelectInput selectedGame={setSelectedGameId} error={selectedGameId === 'invalid'}/>
       </div>
 
       {/* nickname input */}
@@ -133,7 +137,7 @@ export function Form() {
           <label htmlFor='discord'>
             Qual seu Discord?
           </label>
-          <Input id='discord' name='discord' placeholder='Usuário#0000' required/>
+          <Input id='discord' name='discord' placeholder='Usuário#0000' required error={!isDiscordValid}/>
         </div>
       </div>
 
