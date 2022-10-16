@@ -6,6 +6,9 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        error: '#e73f5d'
+      },
       backgroundImage: {
         home: 'url("/background-home.png")',
       },

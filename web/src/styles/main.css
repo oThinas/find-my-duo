@@ -11,3 +11,17 @@ hmtl {
 html::-webkit-scrollbar {
   display: none;
 }
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(100%);
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield;
+}

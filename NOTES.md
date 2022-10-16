@@ -7,8 +7,15 @@
   - Prisma
   - Cors
 - React
+  - Vite
+  - Tailwind
   - Phosphor Icons
+  - Radix
 - React Native
+  - React Navigation
+  -Expo
   - Linear Gradient
 - Postman
 - SQLite
+
+Aula 5: 45:00
