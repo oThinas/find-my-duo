@@ -18,4 +18,4 @@
 - Postman
 - SQLite
 
-Aula 5: 42:00
+Aula 5: 45:00

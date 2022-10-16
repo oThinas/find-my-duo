@@ -24,7 +24,7 @@ export function Game() {
 
   const [ads, setAds] = useState<IAdProps[]>([])
   useEffect(() => {
-    fetch(`http://192.168.0.4:3000/games/${game.id}/ads`)
+    fetch(`http://192.168.15.9:3000/games/${game.id}/ads`) // TODO: Trocar para o ip na rede que estiver conectada
     .then(response => response.json())
     .then(data => setAds(data))
   }, [])

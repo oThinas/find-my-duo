@@ -16,7 +16,7 @@ import LogoImg from '../../assets/logo-nlw-esports.png'
 export function Home() {
   const [games, setGames] = useState<IGameCardProps[]>([])
   useEffect(() => {
-    fetch('http://192.168.0.4:3000/games')
+    fetch('http://192.168.15.9:3000/games') // TODO: Trocar para o ip na rede que estiver conectada
     .then(response => response.json())
     .then(data => setGames(data))
   }, [])
