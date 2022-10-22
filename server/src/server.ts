@@ -106,7 +106,5 @@ app.post('/games/:id/ads', async (request, response) => {
   return response.status(201).json(ad)
 })
 
-/* Configurações do deploy do server */
-const hostname = '0.0.0.0'
-const port = 3000
-app.listen(port, hostname)
+
+app.listen(3000)
