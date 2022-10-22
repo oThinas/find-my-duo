@@ -68,8 +68,7 @@ export function Game() {
           ListEmptyComponent={() => <Text style={styles.emptyList}>Carregando... Parece que ninguém quer jogar isso :(</Text>}
         />
 
-        <DuoMatch visible={discordSelected.length > 0} discord={'Discord Mocado'} 
-          onClose={() => setDiscordSelected('')}
+        <DuoMatch visible={discordSelected.length > 0} discord={discordSelected}  onClose={() => setDiscordSelected('')}
         />
       </SafeAreaView>
     </Background>
