@@ -11,10 +11,10 @@
   - Tailwind
   - Phosphor Icons
   - Radix
+  - Axios
 - React Native
   - React Navigation
   -Expo
-  - Linear Gradient
 - Postman
 - SQLite
 

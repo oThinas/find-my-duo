@@ -7,6 +7,7 @@ import { Entypo } from '@expo/vector-icons'
 import { Background } from '../../components/Background';
 import { Header } from '../../components/Header';
 import { AdCard } from '../../components/AdCard';
+import { DuoMatch } from '../../components/DuoMatch';
 
 import { IGameRouteProps } from '../../interfaces/IGameRouteProps';
 import { IAdProps } from '../../interfaces/IAdProps';
@@ -24,10 +25,18 @@ export function Game() {
 
   const [ads, setAds] = useState<IAdProps[]>([])
   useEffect(() => {
-    fetch(`http://192.168.15.9:3000/games/${game.id}/ads`) // TODO: Trocar para o ip na rede que estiver conectada
+    fetch(`http://192.168.0.4:3000/games/${game.id}/ads`) // TODO: Trocar para o ip na rede que estiver conectada
     .then(response => response.json())
     .then(data => setAds(data))
   }, [])
+
+  const [discordSelected, setDiscordSelected] = useState('')
+
+  async function getDiscordUser(adId: string) {
+    fetch(`http://192.168.0.4:3000/ads/${adId}/discord`) // TODO: Trocar para o ip na rede que estiver conectada
+    .then(response => response.json())
+    .then(data => setDiscordSelected(data.discord))
+  }
   
   return (
     <Background>
@@ -54,9 +63,13 @@ export function Game() {
           data={ads} 
           keyExtractor={ad => ad.id} 
           renderItem={({ item }) => (
-            <AdCard data={item} onConnect={() =>{}}/> /* TODO: Criar modal */
+            <AdCard data={item} onConnect={() => getDiscordUser(item.id)}/> // TODO: Criar modal
           )}
           ListEmptyComponent={() => <Text style={styles.emptyList}>Carregando... Parece que ninguém quer jogar isso :(</Text>}
+        />
+
+        <DuoMatch visible={discordSelected.length > 0} discord={'Discord Mocado'} 
+          onClose={() => setDiscordSelected('')}
         />
       </SafeAreaView>
     </Background>
