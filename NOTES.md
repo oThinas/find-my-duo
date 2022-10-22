@@ -17,5 +17,3 @@
   -Expo
 - Postman
 - SQLite
-
-Aula 5: 45:00
