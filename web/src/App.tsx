@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import axios from 'axios';
 import * as Dialog from '@radix-ui/react-dialog'
 
@@ -10,6 +10,7 @@ import { Game } from './interfaces/IGameProps'
 
 import './styles/main.css'
 import LogoImg from './assets/images/logo-home.svg'
+import { ModalContext } from './contexts/ModalContext';
 
 export function App() {
   const [games, setGames] = useState<Game[]>([])
@@ -31,6 +32,9 @@ export function App() {
     checkMobile()
   }, [])
   window.addEventListener('resize', checkMobile)
+
+  const { isModalOpen, toggleModalOpenState } = useContext(ModalContext)
+  console.log('rest', isModalOpen)
   
   return(
     <main className='flex flex-col items-center max-w-[1344px] h-screen mx-auto my-20'>
@@ -69,7 +73,7 @@ export function App() {
         </div>
 
         {/* Modal create ad*/}
-        <Dialog.Root>
+        <Dialog.Root open={isModalOpen} onOpenChange={toggleModalOpenState}>
           <CreateAdBanner />
 
           <CreateAdModal />
