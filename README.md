@@ -1,4 +1,6 @@
-# Notas para o projeto
+# Find my Duo
+
+> ! Esse projeto foi feito apenas como estudo e não será feito deploy para produção !
 
 ## Tecnologias utilizadas
 
@@ -7,8 +9,12 @@
   - Prisma
   - Cors
 - React
+  - Vite
+  - Tailwind
   - Phosphor Icons
+  - Radix
+  - Axios
 - React Native
-  - Linear Gradient
-- Postman
+  - React Navigation
+  -Expo
 - SQLite
