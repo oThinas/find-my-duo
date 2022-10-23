@@ -31,7 +31,6 @@ export function Form() {
     const formData = new FormData(event.target as HTMLFormElement)
     const data = Object.fromEntries(formData)
 
-    console.log(selectedGameId)
     if (!selectedGameId) {
       toast.error('Selecione um jogo', {
         iconTheme: {

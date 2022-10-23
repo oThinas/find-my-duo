@@ -34,7 +34,6 @@ export function App() {
   window.addEventListener('resize', checkMobile)
 
   const { isModalOpen, toggleModalOpenState } = useContext(ModalContext)
-  console.log('rest', isModalOpen)
   
   return(
     <main className='flex flex-col items-center max-w-[1344px] h-screen mx-auto my-20'>
