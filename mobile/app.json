@@ -24,16 +24,10 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#121214"
-      },
-      "package": "com.findmyduo"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "0f475281-8ce4-43f7-80a6-d7702f4e5d31"
-      }
     }
   }
 }

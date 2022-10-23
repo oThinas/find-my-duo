@@ -1,6 +1,6 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useContext, useState } from 'react';
 import axios from 'axios';
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 import * as Dialog from '@radix-ui/react-dialog'
 import * as Checkbox from '@radix-ui/react-checkbox'
 import { Check, GameController } from "phosphor-react";
@@ -8,6 +8,7 @@ import { Check, GameController } from "phosphor-react";
 import { Input } from "./Input";
 import { SelectInput } from './SelectInput';
 import { WeekDaysInput } from './WeekDaysInput';
+import { ModalContext } from '../../contexts/ModalContext';
 
 interface IFormData { 
   name?: any; 
@@ -24,7 +25,7 @@ export function Form() {
   const [useVoiceChannel, setUseVoiceChannel] = useState(false)
   const [isDiscordValid, setIsDiscordValid] = useState(true)
   
-  async function createAd(event: FormEvent) {
+  async function handleCreateAd(event: FormEvent) {
     event.preventDefault()
 
     const formData = new FormData(event.target as HTMLFormElement)
@@ -50,7 +51,7 @@ export function Form() {
     
     const discord = data.discord.toString()
     const regex = /#[0-9]{4}$/
-    if (!regex.test(discord)){
+    if (!regex.test(discord)) {
       toast.error('Discord inválido', {
         iconTheme: {
           primary: '#e73f5d',
@@ -87,9 +88,12 @@ export function Form() {
     toast.promise(makeResquest(data), {
       loading: 'Criando anúncio',
       success: 'Anúncio criado com sucesso',
-      error: 'Erro ao criar um anúncio'
+      error: 'Erro do servidor ao criar um anúncio'
     })
   }
+
+  const { toggleModalOpenState } = useContext(ModalContext)
+
 
   async function makeResquest(data: IFormData) {
     await axios.post(`http://localhost:3000/games/${selectedGameId}/ads`, {
@@ -100,13 +104,17 @@ export function Form() {
       hoursEnd: data.hoursEnd,
       discord: data.discord,
       useVoiceChannel: useVoiceChannel
+    }).then(() => {
+      toggleModalOpenState()
+      setTimeout(() => {
+        location.reload()
+      }, 2500);
     })
 
-    location.reload()
   }
   
   return (
-    <form className='flex flex-col gap-4 my-8 font-semibold' onSubmit={createAd}>
+    <form className='flex flex-col gap-4 my-8 font-semibold' onSubmit={handleCreateAd}>
       {/* game input */}
       <div className='flex flex-col gap-2'>
         <label htmlFor='game'>
@@ -192,33 +200,6 @@ export function Form() {
           Encontrar duo
         </button>
       </footer>
-
-      <Toaster
-        containerStyle={{
-          top: -20,
-        }}
-        toastOptions={{
-          style: {
-            maxWidth: '1000px',
-            fontFamily: 'Inter, sans-serif;',
-            fontWeight: '600',
-            color: 'white',
-            backgroundColor: '#2a2634'
-          },
-          success: {
-            iconTheme: {
-              primary: 'green',
-              secondary: 'white',
-            },
-          },
-          error: {
-            iconTheme: {
-              primary: '#e73f5d',
-              secondary: 'white',
-            },
-          }
-        }}
-      />
     </form>
   )
 }

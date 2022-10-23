@@ -7,7 +7,11 @@ import { convertMinutesToHourString } from './utils/convert-minutes-to-hour-stri
 
 const app = express()
 app.use(express.json())
-app.use(cors()) /* Aberto a todos */
+app.use(cors()) /* Por enquanto, aberto a todos */
+/* TODO: Antes de subir para produção, especificar o domínio que poderá acessar esse backend */
+/* app.use(cors({
+  origin: 'dominio'
+})) */
 
 const prisma = new PrismaClient()
 
@@ -90,6 +94,8 @@ app.post('/games/:id/ads', async (request, response) => {
   const gameId = request.params.id
   const body = request.body
 
+  /* TODO: Validação com a biblioteca Zod */
+
   const ad = await prisma.ad.create({
     data: {
       gameId,
@@ -106,5 +112,7 @@ app.post('/games/:id/ads', async (request, response) => {
   return response.status(201).json(ad)
 })
 
-
-app.listen(3000)
+/* Configurações do deploy do server */
+const hostname = '0.0.0.0'
+const port = 3000
+app.listen(port, hostname)
