@@ -16,5 +16,5 @@
   - Axios
 - React Native
   - React Navigation
-  -Expo
+  - Expo
 - SQLite
